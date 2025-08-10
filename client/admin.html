@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Memory Game - Admin Panel</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .nav-buttons {
+            margin: 20px 0;
+        }
+        
+        .nav-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .nav-buttons a:hover {
+            background: #2980b9;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-group small {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        #teams-input, #edit-teams-input {
+            font-family: monospace;
+        }
+        
+        button {
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #229954;
+        }
+        
+        button.cancel-btn {
+            background: #95a5a6;
+        }
+        
+        button.cancel-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .player-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .player-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #fafafa;
+            transition: all 0.2s;
+        }
+        
+        .player-item:hover {
+            background: #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .player-info {
+            flex-grow: 1;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .player-keyword {
+            color: #3498db;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+        
+        .player-teams {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .player-story {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.4;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .player-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .edit-btn {
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .edit-btn:hover {
+            background: #2980b9;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        
+        .edit-form-container {
+            display: none;
+            background: #fff8dc;
+            border: 2px solid #f39c12;
+        }
+        
+        .edit-form-container h2 {
+            color: #e67e22;
+        }
+        
+        .player-count {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: relative;
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Basketball Memory Game - Admin Panel</h1>
+    
+    <div class="nav-buttons">
+        <a href="/">← Back to Game</a>
+    </div>
+    
+    <div class="success-message" id="success-message"></div>
+    <div class="error-message" id="error-message"></div>
+    
+    <!-- Add Player Form -->
+    <div class="form-container" id="add-form-container">
+        <h2>Add New Player</h2>
+        <form id="add-player-form">
+            <div class="form-group">
+                <label for="player-name">Player Name:</label>
+                <input type="text" id="player-name" required placeholder="e.g., LeBron James">
+            </div>
+            
+            <div class="form-group">
+                <label for="key-word">Memory Key Word:</label>
+                <input type="text" id="key-word" required placeholder="e.g., King">
+                <small>A memorable word or phrase to help remember this player</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="teams-input">Teams (in order):</label>
+                <input type="text" id="teams-input" required placeholder="CLE, MIA, CLE, LAL">
+                <small>Enter team codes separated by commas. Common codes: ATL, BOS, BKN, CHA, CHI, CLE, DAL, DEN, DET, GSW, HOU, IND, LAC, LAL, MEM, MIA, MIL, MIN, NOP, NYK, OKC, ORL, PHI, PHO, POR, SAC, SAS, TOR, UTA, WAS</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="story">Memory Story:</label>
+                <textarea id="story" rows="6" required placeholder="A (CLE) taxi cab..."></textarea>
+                <small>Use (TEAM) format for team codes in your story. Example: "A (CLE) taxi cab drove to (MIA) beach..."</small>
+            </div>
+            
+            <button type="submit">Add Player</button>
+        </form>
+    </div>
+    
+    <!-- Edit Player Form (Hidden by default) -->
+    <div class="form-container edit-form-container" id="edit-form-container">
+        <h2>Edit Player</h2>
+        <form id="edit-player-form">
+            <input type="hidden" id="edit-original-name">
+            
+            <div class="form-group">
+                <label for="edit-player-name">Player Name:</label>
+                <input type="text" id="edit-player-name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-key-word">Memory Key Word:</label>
+                <input type="text" id="edit-key-word" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-teams-input">Teams (in order):</label>
+                <input type="text" id="edit-teams-input" required>
+                <small>Enter team codes separated by commas</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-story">Memory Story:</label>
+                <textarea id="edit-story" rows="6" required></textarea>
+                <small>Use (TEAM) format for team codes in your story</small>
+            </div>
+            
+            <button type="submit">Save Changes</button>
+            <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+        </form>
+    </div>
+    
+    <!-- Players List -->
+    <div class="player-list">
+        <h2>Current Players in Database</h2>
+        <div class="player-count" id="player-count"></div>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search players by name or team..." onkeyup="filterPlayers()">
+        </div>
+        
+        <div id="player-list">
+            Loading players...
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="delete-player-name"></strong>?</p>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="confirmDelete()" class="delete-btn">Delete</button>
+                <button onclick="closeDeleteModal()" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allPlayers = {};
+        let playerToDelete = null;
+        
+        // Load players from database
+        async function loadPlayers() {
+            try {
+                const response = await fetch('/api/players');
+                allPlayers = await response.json();
+                displayPlayers();
+            } catch (error) {
+                console.error('Error loading players:', error);
+                document.getElementById('player-list').innerHTML = '<p>Error loading players.</p>';
+            }
+        }
+        
+        function displayPlayers() {
+            const playerList = document.getElementById('player-list');
+            const playerCount = document.getElementById('player-count');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            const playerNames = Object.keys(allPlayers);
+            playerCount.textContent = `Total: ${playerNames.length} players`;
+            
+            if (playerNames.length === 0) {
+                playerList.innerHTML = '<p>No players in database yet.</p>';
+                return;
+            }
+            
+            let html = '';
+            let displayCount = 0;
+            
+            for (const [name, data] of Object.entries(allPlayers)) {
+                // Filter based on search
+                if (searchTerm && 
+                    !name.toLowerCase().includes(searchTerm) && 
+                    !data.teams.join(' ').toLowerCase().includes(searchTerm) &&
+                    !data.keyWord.toLowerCase().includes(searchTerm)) {
+                    continue;
+                }
+                
+                displayCount++;
+                html += `
+                    <div class="player-item">
+                        <div class="player-header">
+                            <div class="player-info">
+                                <div class="player-name">${name}</div>
+                                <div class="player-keyword">Memory Key: ${data.keyWord}</div>
+                                <div class="player-teams">Teams (${data.teams.length}): ${data.teams.join(', ')}</div>
+                                <div class="player-story">${data.story}</div>
+                            </div>
+                            <div class="player-actions">
+                                <button class="edit-btn" onclick="editPlayer('${name.replace(/'/g, "\\'")}')">Edit</button>
+                                <button class="delete-btn" onclick="deletePlayer('${name.replace(/'/g, "\\'")}')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (displayCount === 0) {
+                playerList.innerHTML = '<p>No players match your search.</p>';
+            } else {
+                playerList.innerHTML = html;
+            }
+        }
+        
+        function filterPlayers() {
+            displayPlayers();
+        }
+        
+        // Edit player
+        async function editPlayer(name) {
+            const player = allPlayers[name];
+            if (!player) return;
+            
+            // Hide add form, show edit form
+            document.getElementById('add-form-container').style.display = 'none';
+            document.getElementById('edit-form-container').style.display = 'block';
+            
+            // Fill in the form
+            document.getElementById('edit-original-name').value = name;
+            document.getElementById('edit-player-name').value = name;
+            document.getElementById('edit-key-word').value = player.keyWord;
+            document.getElementById('edit-teams-input').value = player.teams.join(', ');
+            document.getElementById('edit-story').value = player.story;
+            
+            // Scroll to form
+            document.getElementById('edit-form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function cancelEdit() {
+            document.getElementById('add-form-container').style.display = 'block';
+            document.getElementById('edit-form-container').style.display = 'none';
+            document.getElementById('edit-player-form').reset();
+        }
+        
+        // Delete player
+        function deletePlayer(name) {
+            playerToDelete = name;
+            document.getElementById('delete-player-name').textContent = name;
+            document.getElementById('delete-modal').style.display = 'block';
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+            playerToDelete = null;
+        }
+        
+        async function confirmDelete() {
+            if (!playerToDelete) return;
+            
+            try {
+                const response = await fetch(`/api/players/${encodeURIComponent(playerToDelete)}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showSuccess(`Successfully deleted ${playerToDelete}`);
+                    closeDeleteModal();
+                    loadPlayers();
+                } else {
+                    const error = await response.json();
+                    showError(error.error || 'Failed to delete player');
+                }
+            } catch (error) {
+                console.error('Error deleting player:', error);
+                showError('Failed to delete player');
+            }
+        }
+        
+        // Add player form submission
+        document.getElementById('add-player-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('player-name').value.trim();
+            const keyWord = document.getElementById('key-word').value.trim();
+            const teamsInput = document.getElementById('teams-input').value.trim();
+            const story = document.getElementById('story').value.trim();
+            
+            // Parse teams
+            const teams = teamsInput.split(',').map(t => t.trim().toUpperCase());
+            
+            // Validate team codes
+            const validTeams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'];
+            
+            for (const team of teams) {
+                if (!validTeams.includes(team)) {
+                    showError(`Invalid team code: ${team}`);
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch('/api/players', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        keyWord,
+                        teams,
+                        story
+                    })
+                });
+                
+                if (response.ok) {
+                    showSuccess(`Successfully added ${name}!`);
+                    document.getElementById('add-player-form').reset();
+                    loadPlayers();
+                } else {
+                    const error = await response.json();
+                    showError(error.error || 'Failed to add player');
+                }
+            } catch (error) {
+                console.error('Error adding player:', error);
+                showError('Failed to add player. Make sure the server is running.');
+            }
+        });
+        
+        // Edit player form submission
+        document.getElementById('edit-player-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const originalName = document.getElementById('edit-original-name').value;
+            const newName = document.getElementById('edit-player-name').value.trim();
+            const keyWord = document.getElementById('edit-key-word').value.trim();
+            const teamsInput = document.getElementById('edit-teams-input').value.trim();
+            const story = document.getElementById('edit-story').value.trim();
+            
+            // Parse teams
+            const teams = teamsInput.split(',').map(t => t.trim().toUpperCase());
+            
+            // Validate team codes
+            const validTeams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'];
+            
+            for (const team of teams) {
+                if (!validTeams.includes(team)) {
+                    showError(`Invalid team code: ${team}`);
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch(`/api/players/${encodeURIComponent(originalName)}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        newName,
+                        keyWord,
+                        teams,
+                        story
+                    })
+                });
+                
+                if (response.ok) {
+                    showSuccess(`Successfully updated ${newName}!`);
+                    cancelEdit();
+                    loadPlayers();
+                } else {
+                    const error = await response.json();
+                    showError(error.error || 'Failed to update player');
+                }
+            } catch (error) {
+                console.error('Error updating player:', error);
+                showError('Failed to update player. Make sure the server is running.');
+            }
+        });
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success-message');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('delete-modal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        }
+        
+        // Load players when page loads
+        loadPlayers();
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Team Memory Test</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 class="app-title">Basketball Memory Test</h1>
+            <button class="menu-btn" onclick="ui.toggleMenu()">☰</button>
+        </div>
+    </div>
+    
+    <!-- Overlay for menu -->
+    <div class="overlay" id="overlay" onclick="ui.closeMenu()"></div>
+    
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" id="nav-menu">
+        <div class="nav-header">
+            <h2 class="nav-title">Players</h2>
+            <button class="close-btn" onclick="ui.closeMenu()">×</button>
+        </div>
+        
+        <div class="player-list" id="player-list">
+            <!-- Players will be dynamically generated -->
+        </div>
+        
+        <div class="nav-footer">
+            <button onclick="ui.selectRandomPlayer()" class="random-test-btn">Random Test</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen">
+            <div class="test-container">
+                <div class="score-display">
+                    <span id="score">Score: 0/0</span>
+                </div>
+                
+                <div class="mode-selector">
+                    <button id="player-mode-btn" onclick="ui.setMode('player')" class="mode-btn active">Player Mode</button>
+                    <button id="team-mode-btn" onclick="ui.setMode('team')" class="mode-btn inactive">Team Mode</button>
+                </div>
+                
+                <div id="player-mode-welcome">
+                    <p class="welcome-text">
+                        Tap the menu (☰) to select a player and test your memory of which teams they played for.
+                    </p>
+                </div>
+                
+                <div id="team-mode-welcome" style="display: none;">
+                    <p class="welcome-text">
+                        Select a team below and identify which players from the database played for them.
+                    </p>
+                </div>
+                
+                <div class="team-lookup">
+                    <h3 style="margin-top: 0; color: #2c3e50;" id="team-lookup-title">Team Lookup</h3>
+                    <select id="team-select" class="team-select" onchange="ui.handleTeamSelection()">
+                        <option value="">Select a team...</option>
+                        <!-- Team options will be dynamically generated -->
+                    </select>
+                    
+                    <div id="team-results" class="team-results"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Test Screen -->
+        <div id="team-test-content" style="display: none;">
+            <div class="test-container">
+                <div class="player-header">
+                    <div class="player-title" id="team-test-name"></div>
+                    <div class="player-info">
+                        <strong>Players in database:</strong> <span id="team-player-count"></span>
+                    </div>
+                </div>
+                
+                <div class="player-inputs" id="player-inputs">
+                    <!-- Player inputs will be generated here -->
+                </div>
+                
+                <div class="buttons">
+                    <button onclick="game.checkTeamAnswers()" class="check-btn">Check Answers</button>
+                    <button onclick="ui.showTeamAnswers()" class="hint-btn">Show Answers</button>
+                </div>
+                
+                <div class="buttons">
+                    <button onclick="ui.resetTeamTest()" class="reset-btn">Reset</button>
+                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Back to Home</button>
+                </div>
+                
+                <div id="team-test-results" class="results"></div>
+                
+                <div id="player-stories" style="margin-top: 20px;">
+                    <!-- Player story segments will appear here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile View -->
+        <div id="profile-view" style="display: none;">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-title" id="profile-player-name"></div>
+                    <div class="profile-key-word" id="profile-key-word"></div>
+                </div>
+                
+                <div class="profile-teams">
+                    <h3>Teams (Chronological Order)</h3>
+                    <div class="teams-list" id="profile-teams-list"></div>
+                </div>
+                
+                <div class="profile-story">
+                    <h3>Memory Story</h3>
+                    <div class="story-content" id="profile-story-content"></div>
+                </div>
+                
+                <div class="buttons">
+                    <button onclick="ui.selectPlayer(game.currentProfilePlayer)" class="test-btn">Test This Player</button>
+                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Back to Home</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Player Test Screen -->
+        <div id="test-content" style="display: none;">
+            <div class="test-container">
+                <div class="player-header">
+                    <div class="player-title" id="player-name"></div>
+                    <div class="player-info">
+                        <strong>Key Word:</strong> <span id="key-word"></span><br>
+                        <strong>Teams:</strong> <span id="team-count"></span>
+                    </div>
+                </div>
+                
+                <div class="team-inputs" id="team-inputs">
+                    <!-- Team inputs will be generated here -->
+                </div>
+                
+                <div class="buttons">
+                    <button onclick="game.checkAnswers()" class="check-btn">Check Answers</button>
+                    <button onclick="ui.showHint()" class="hint-btn">Show Story</button>
+                </div>
+                
+                <div class="buttons triple">
+                    <button onclick="ui.resetTest()" class="reset-btn">Reset</button>
+                    <button onclick="ui.selectRandomPlayer()" class="new-player-btn">Random</button>
+                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Home</button>
+                </div>
+                
+                <div id="results" class="results"></div>
+                
+                <div id="story-hint" class="story-hint">
+                    <h3>Memory Story:</h3>
+                    <div id="story-text" class="story-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Datalists for autocomplete -->
+    <datalist id="team-codes">
+        <!-- Will be populated dynamically -->
+    </datalist>
+
+    <datalist id="player-names">
+        <!-- Will be populated dynamically -->
+    </datalist>
+
+    <!-- Load JavaScript files -->
+    <script src="js/players.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ui.js"></script>
+    
+    <!-- Fallback initialization -->
+    <script>
+        // Ensure UI is initialized even if DOMContentLoaded already fired
+        window.addEventListener('load', () => {
+            if (typeof ui === 'undefined') {
+                ui = new UIManager();
+            }
+        });
+    </script>
+</body>
+</html>
