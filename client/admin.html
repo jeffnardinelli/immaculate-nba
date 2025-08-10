@@ -3,20 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basketball Memory Game - Admin Panel</title>
+    <title>immaculate game - nba - admin panel</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Courier Prime', 'Courier New', monospace;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #000000;
+            color: #00ff00;
         }
         
         h1 {
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
+            color: #00ff00;
+            border-bottom: 3px solid #00ff00;
             padding-bottom: 10px;
+            text-transform: lowercase;
+            letter-spacing: 2px;
+        }
+        
+        h2 {
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        h3 {
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .nav-buttons {
@@ -26,23 +43,29 @@
         .nav-buttons a {
             display: inline-block;
             padding: 10px 20px;
-            background: #3498db;
-            color: white;
+            background: #000000;
+            color: #00ff00;
             text-decoration: none;
-            border-radius: 5px;
+            border: 2px solid #00ff00;
             margin-right: 10px;
+            font-family: inherit;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
         }
         
         .nav-buttons a:hover {
-            background: #2980b9;
+            background: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         }
         
         .form-container {
-            background: white;
+            background: #000000;
             padding: 20px;
-            border-radius: 10px;
+            border: 2px solid #00ff00;
             margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
         }
         
         .form-group {
@@ -53,79 +76,92 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #00ff00;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
         }
         
         .form-group input,
         .form-group textarea {
             width: 100%;
             padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+            color: #00ff00;
             font-size: 16px;
+            font-family: inherit;
         }
         
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #3498db;
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
         }
         
         .form-group small {
-            color: #666;
-            font-size: 14px;
+            color: rgba(0, 255, 0, 0.6);
+            font-size: 12px;
         }
         
         #teams-input, #edit-teams-input {
-            font-family: monospace;
+            font-family: 'Courier Prime', monospace;
         }
         
         button {
-            background: #27ae60;
-            color: white;
+            background: #000000;
+            color: #00ff00;
             padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
+            border: 2px solid #00ff00;
             font-size: 16px;
             cursor: pointer;
             margin-right: 10px;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
         }
         
         button:hover {
-            background: #229954;
+            background: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         }
         
         button.cancel-btn {
-            background: #95a5a6;
+            border-color: rgba(0, 255, 0, 0.5);
+            color: rgba(0, 255, 0, 0.7);
         }
         
         button.cancel-btn:hover {
-            background: #7f8c8d;
+            background: rgba(0, 255, 0, 0.3);
+            color: #000000;
         }
         
         .success-message {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid #00ff00;
             margin: 20px 0;
             display: none;
         }
         
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff0000;
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid #ff0000;
             margin: 20px 0;
             display: none;
         }
         
         .player-list {
-            background: white;
+            background: #000000;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px solid #00ff00;
+            box-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
         }
         
         .search-box {
@@ -135,23 +171,30 @@
         .search-box input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+            color: #00ff00;
             font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
         }
         
         .player-item {
             padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #00ff00;
             margin-bottom: 15px;
-            background: #fafafa;
+            background: rgba(0, 255, 0, 0.02);
             transition: all 0.2s;
         }
         
         .player-item:hover {
-            background: #f0f0f0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 255, 0, 0.3);
         }
         
         .player-header {
@@ -167,25 +210,27 @@
         
         .player-name {
             font-weight: bold;
-            color: #2c3e50;
+            color: #00ff00;
             font-size: 1.2em;
             margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .player-keyword {
-            color: #3498db;
+            color: rgba(0, 255, 0, 0.8);
             font-style: italic;
             margin-bottom: 5px;
         }
         
         .player-teams {
-            color: #666;
+            color: rgba(0, 255, 0, 0.7);
             font-size: 14px;
             margin-bottom: 8px;
         }
         
         .player-story {
-            color: #555;
+            color: rgba(0, 255, 0, 0.6);
             font-size: 14px;
             line-height: 1.4;
             max-height: 60px;
@@ -199,47 +244,54 @@
         }
         
         .edit-btn {
-            background: #3498db;
-            color: white;
+            background: #000000;
+            color: #00ff00;
             padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
+            border: 1px solid #00ff00;
             cursor: pointer;
             font-size: 14px;
+            font-family: inherit;
+            text-transform: uppercase;
+            transition: all 0.2s;
         }
         
         .edit-btn:hover {
-            background: #2980b9;
+            background: #00ff00;
+            color: #000000;
         }
         
         .delete-btn {
-            background: #e74c3c;
-            color: white;
+            background: #000000;
+            color: #ff0000;
             padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
+            border: 1px solid #ff0000;
             cursor: pointer;
             font-size: 14px;
+            font-family: inherit;
+            text-transform: uppercase;
+            transition: all 0.2s;
         }
         
         .delete-btn:hover {
-            background: #c0392b;
+            background: #ff0000;
+            color: #000000;
         }
         
         .edit-form-container {
             display: none;
-            background: #fff8dc;
-            border: 2px solid #f39c12;
+            background: #000000;
+            border: 2px solid #ffff00;
         }
         
         .edit-form-container h2 {
-            color: #e67e22;
+            color: #ffff00;
         }
         
         .player-count {
-            color: #666;
+            color: rgba(0, 255, 0, 0.7);
             font-size: 14px;
             margin-bottom: 15px;
+            text-transform: uppercase;
         }
         
         .modal {
@@ -249,26 +301,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 1000;
         }
         
         .modal-content {
             position: relative;
-            background: white;
+            background: #000000;
+            border: 2px solid #00ff00;
             width: 90%;
             max-width: 500px;
             margin: 100px auto;
             padding: 20px;
-            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
         }
         
         .modal-header {
             margin-bottom: 20px;
+            color: #00ff00;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
         }
         
         .modal-body {
             margin-bottom: 20px;
+            color: rgba(0, 255, 0, 0.8);
+        }
+        
+        .modal-body strong {
+            color: #00ff00;
         }
         
         .modal-footer {
@@ -279,10 +342,10 @@
     </style>
 </head>
 <body>
-    <h1>Basketball Memory Game - Admin Panel</h1>
+    <h1>admin panel</h1>
     
     <div class="nav-buttons">
-        <a href="/">← Back to Game</a>
+        <a href="/">← back to game</a>
     </div>
     
     <div class="success-message" id="success-message"></div>
