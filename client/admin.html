@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>immaculate game - add/edit</title>
-
+    <title>immaculate game - nba - admin panel</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
         
@@ -346,7 +345,7 @@
     <h1>admin panel</h1>
     
     <div class="nav-buttons">
-        <a href="/">← back</a>
+        <a href="/">← back to game</a>
     </div>
     
     <div class="success-message" id="success-message"></div>
@@ -417,7 +416,8 @@
     
     <!-- Players List -->
     <div class="player-list">
-        <h2>Current Players in Database <span id="player-count" style="font-weight: normal; font-size: 14px; color: rgba(0, 255, 0, 0.7);"></span></h2>
+        <h2>Current Players in Database</h2>
+        <div class="player-count" id="player-count"></div>
         
         <div class="search-box">
             <input type="text" id="search-input" placeholder="Search players by name or team..." onkeyup="filterPlayers()">
@@ -467,7 +467,7 @@
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             
             const playerNames = Object.keys(allPlayers);
-            playerCount.textContent = `(${playerNames.length})`;
+            playerCount.textContent = `Total: ${playerNames.length} players`;
             
             if (playerNames.length === 0) {
                 playerList.innerHTML = '<p>No players in database yet.</p>';
