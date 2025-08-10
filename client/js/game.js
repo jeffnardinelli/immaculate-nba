@@ -13,8 +13,8 @@ class BasketballMemoryGame {
     getPlayersForTeam(teamCode) {
         const foundPlayers = [];
         
-        for (const playerName in PLAYERS_DB) {
-            const player = PLAYERS_DB[playerName];
+        for (const playerName in game.getPlayers()) {
+            const player = game.getPlayers()[playerName];
             if (player.teams.includes(teamCode)) {
                 foundPlayers.push(playerName);
             }
@@ -38,7 +38,7 @@ class BasketballMemoryGame {
 
     // Check player test answers
     checkAnswers() {
-        const player = PLAYERS_DB[this.currentPlayer];
+        const player = game.getPlayers()[this.currentPlayer];
         let correctCount = 0;
         
         for (let i = 0; i < player.teams.length; i++) {
@@ -132,8 +132,8 @@ class BasketballMemoryGame {
         }
         
         // Count players per team
-        for (const playerName in PLAYERS_DB) {
-            const player = PLAYERS_DB[playerName];
+        for (const playerName in game.getPlayers()) {
+            const player = game.getPlayers()[playerName];
             for (const team of player.teams) {
                 if (teamCounts[team] !== undefined) {
                     teamCounts[team]++;
@@ -148,8 +148,8 @@ class BasketballMemoryGame {
     lookupTeam(teamCode) {
         const foundPlayers = [];
         
-        for (const playerName in PLAYERS_DB) {
-            const player = PLAYERS_DB[playerName];
+        for (const playerName in game.getPlayers()) {
+            const player = game.getPlayers()[playerName];
             const teamIndex = player.teams.indexOf(teamCode);
             
             if (teamIndex !== -1) {
