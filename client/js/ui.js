@@ -563,14 +563,38 @@ class UIManager {
 // Create global UI instance when DOM is ready
 let ui;
 
-// Check if DOM is already loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM loaded, creating UIManager...');
+// Wait for both DOM and players to be ready
+function initializeWhenReady() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeWhenReady);
+        return;
+    }
+    
+    // DOM is ready, now wait a moment for game.js to load players
+    setTimeout(() => {
+        console.log('Creating UIManager after delay...');
         ui = new UIManager();
-    });
-} else {
-    // DOM is already loaded
-    console.log('DOM already loaded, creating UIManager...');
-    ui = new UIManager();
+        
+        // If players are already loaded, refresh the UI
+        if (game && game.getPlayers() && Object.keys(game.getPlayers()).length > 0) {
+            console.log('Players already loaded, refreshing UI...');
+            ui.renderPlayerList();
+            ui.populateTeamDropdown();
+            ui.populateDataLists();
+        } else {
+            console.log('Waiting for players to load...');
+            // Wait a bit more and try again
+            setTimeout(() => {
+                if (game && game.getPlayers()) {
+                    console.log('Refreshing UI with loaded players...');
+                    ui.renderPlayerList();
+                    ui.populateTeamDropdown();
+                    ui.populateDataLists();
+                }
+            }, 1000);
+        }
+    }, 500); // Wait 500ms for game.js to initialize
 }
+
+// Start the initialization
+initializeWhenReady();
