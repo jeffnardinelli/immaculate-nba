@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basketball Team Memory Test</title>
+    <title>immaculate game - nba</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <!-- Header -->
     <div class="header">
         <div class="header-content">
-            <h1 class="app-title">Basketball Memory Test</h1>
+            <h1 class="app-title">immaculate game - nba</h1>
             <button class="menu-btn" onclick="ui.toggleMenu()">☰</button>
         </div>
     </div>
@@ -61,7 +61,7 @@
                 </div>
                 
                 <div class="team-lookup">
-                    <h3 style="margin-top: 0; color: #2c3e50;" id="team-lookup-title">Team Lookup</h3>
+                    <h3 style="margin-top: 0;" id="team-lookup-title">Team Lookup</h3>
                     <select id="team-select" class="team-select" onchange="ui.handleTeamSelection()">
                         <option value="">Select a team...</option>
                         <!-- Team options will be dynamically generated -->
@@ -69,6 +69,9 @@
                     
                     <div id="team-results" class="team-results"></div>
                 </div>
+                
+                <!-- Admin Link Button -->
+                <button class="admin-link-btn" onclick="window.location.href='/admin.html'">add/edit player</button>
             </div>
         </div>
         
@@ -93,7 +96,7 @@
                 
                 <div class="buttons">
                     <button onclick="ui.resetTeamTest()" class="reset-btn">Reset</button>
-                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Back to Home</button>
+                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Home</button>
                 </div>
                 
                 <div id="team-test-results" class="results"></div>
@@ -124,7 +127,7 @@
                 
                 <div class="buttons">
                     <button onclick="ui.selectPlayer(game.currentProfilePlayer)" class="test-btn">Test This Player</button>
-                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Back to Home</button>
+                    <button onclick="ui.showWelcomeScreen()" class="back-btn">Home</button>
                 </div>
             </div>
         </div>
@@ -175,7 +178,6 @@
     </datalist>
 
     <!-- Load JavaScript files -->
-    <!-- <script src="js/players.js"></script> --> <!-- Removed this line since we're pulling from db -->
     <script src="js/game.js"></script>
     <script src="js/ui.js"></script>
     
