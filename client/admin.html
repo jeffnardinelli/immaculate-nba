@@ -26,7 +26,7 @@
         
         h2 {
             color: #00ff00;
-            text-transform: uppercase;
+            text-transform: lowercase;
             letter-spacing: 1px;
         }
         
@@ -77,7 +77,7 @@
             margin-bottom: 5px;
             font-weight: bold;
             color: #00ff00;
-            text-transform: uppercase;
+            text-transform: lowercase;
             font-size: 12px;
             letter-spacing: 1px;
         }
@@ -357,25 +357,24 @@
         <form id="add-player-form">
             <div class="form-group">
                 <label for="player-name">Player Name:</label>
-                <input type="text" id="player-name" required placeholder="e.g., LeBron James">
+                <input type="text" id="player-name" required placeholder="e.g., Lou Amundson">
             </div>
             
             <div class="form-group">
                 <label for="key-word">Memory Key Word:</label>
-                <input type="text" id="key-word" required placeholder="e.g., King">
-                <small>A memorable word or phrase to help remember this player</small>
+                <input type="text" id="key-word" required placeholder="e.g., Almond">
+                <small>The memory mnemonic for this player</small>
             </div>
             
             <div class="form-group">
                 <label for="teams-input">Teams (in order):</label>
                 <input type="text" id="teams-input" required placeholder="CLE, MIA, CLE, LAL">
-                <small>Enter team codes separated by commas. Common codes: ATL, BOS, BKN, CHA, CHI, CLE, DAL, DEN, DET, GSW, HOU, IND, LAC, LAL, MEM, MIA, MIL, MIN, NOP, NYK, OKC, ORL, PHI, PHO, POR, SAC, SAS, TOR, UTA, WAS</small>
+                <small>Enter team codes separated by commas. ATL, BOS, BKN, CHA, CHI, CLE, DAL, DEN, DET, GSW, HOU, IND, LAC, LAL, MEM, MIA, MIL, MIN, NOP, NYK, OKC, ORL, PHI, PHO, POR, SAC, SAS, TOR, UTA, WAS</small>
             </div>
             
             <div class="form-group">
                 <label for="story">Memory Story:</label>
-                <textarea id="story" rows="6" required placeholder="A (CLE) taxi cab..."></textarea>
-                <small>Use (TEAM) format for team codes in your story. Example: "A (CLE) taxi cab drove to (MIA) beach..."</small>
+                <textarea id="story" rows="6" required placeholder="A (UTA) jazz musician..."></textarea>
             </div>
             
             <button type="submit">Add Player</button>
