@@ -7,15 +7,42 @@ class BasketballMemoryGame {
         this.currentMode = 'player';
         this.totalTests = 0;
         this.correctTests = 0;
+        this.playersData = {}; // Store loaded players
+    }
+
+    // Load players from API instead of local file
+    async loadPlayers() {
+        try {
+            console.log('Loading players from database...');
+            const response = await fetch('/api/players');
+            if (!response.ok) {
+                throw new Error('Failed to load players');
+            }
+            this.playersData = await response.json();
+            console.log('Loaded players:', Object.keys(this.playersData).length);
+            
+            // Update PLAYERS_DB for backward compatibility
+            window.PLAYERS_DB = this.playersData;
+            
+            return this.playersData;
+        } catch (error) {
+            console.error('Error loading players from database:', error);
+            return {};
+        }
+    }
+
+    // Get current players data
+    getPlayers() {
+        return this.playersData;
     }
 
     // Get players who played for a specific team
     getPlayersForTeam(teamCode) {
         const foundPlayers = [];
         
-        for (const playerName in game.getPlayers()) {
-            const player = game.getPlayers()[playerName];
-            if (player.teams.includes(teamCode)) {
+        for (const playerName in this.playersData) {
+            const player = this.playersData[playerName];
+            if (player.teams && player.teams.includes(teamCode)) {
                 foundPlayers.push(playerName);
             }
         }
@@ -25,6 +52,7 @@ class BasketballMemoryGame {
 
     // Extract story segment for a specific team
     extractStorySegment(story, teamCode) {
+        if (!story) return 'Story not found.';
         const sentences = story.split(/[.!?]+/);
         
         for (const sentence of sentences) {
@@ -38,11 +66,18 @@ class BasketballMemoryGame {
 
     // Check player test answers
     checkAnswers() {
-        const player = game.getPlayers()[this.currentPlayer];
+        const player = this.playersData[this.currentPlayer];
+        if (!player) {
+            console.error('Player not found:', this.currentPlayer);
+            return;
+        }
+        
         let correctCount = 0;
         
         for (let i = 0; i < player.teams.length; i++) {
             const input = document.getElementById(`team-${i}`);
+            if (!input) continue;
+            
             const userAnswer = input.value.trim().toUpperCase();
             
             if (userAnswer === player.teams[i]) {
@@ -54,19 +89,21 @@ class BasketballMemoryGame {
         }
         
         const resultsDiv = document.getElementById('results');
-        const percentage = Math.round((correctCount / player.teams.length) * 100);
-        
-        this.totalTests++;
-        if (correctCount === player.teams.length) {
-            this.correctTests++;
-            resultsDiv.textContent = `Perfect! ${correctCount}/${player.teams.length} (${percentage}%)`;
-            resultsDiv.className = 'results success';
-        } else if (correctCount > 0) {
-            resultsDiv.textContent = `Good effort! ${correctCount}/${player.teams.length} (${percentage}%)`;
-            resultsDiv.className = 'results partial';
-        } else {
-            resultsDiv.textContent = `Keep trying! ${correctCount}/${player.teams.length} (${percentage}%)`;
-            resultsDiv.className = 'results failure';
+        if (resultsDiv) {
+            const percentage = Math.round((correctCount / player.teams.length) * 100);
+            
+            this.totalTests++;
+            if (correctCount === player.teams.length) {
+                this.correctTests++;
+                resultsDiv.textContent = `Perfect! ${correctCount}/${player.teams.length} (${percentage}%)`;
+                resultsDiv.className = 'results success';
+            } else if (correctCount > 0) {
+                resultsDiv.textContent = `Good effort! ${correctCount}/${player.teams.length} (${percentage}%)`;
+                resultsDiv.className = 'results partial';
+            } else {
+                resultsDiv.textContent = `Keep trying! ${correctCount}/${player.teams.length} (${percentage}%)`;
+                resultsDiv.className = 'results failure';
+            }
         }
         
         this.updateScore();
@@ -80,6 +117,8 @@ class BasketballMemoryGame {
         
         for (let i = 0; i < teamPlayers.length; i++) {
             const input = document.getElementById(`player-${i}`);
+            if (!input) continue;
+            
             const userAnswer = input.value.trim();
             
             // Check if this answer matches any correct player (case insensitive)
@@ -100,26 +139,33 @@ class BasketballMemoryGame {
         }
         
         const resultsDiv = document.getElementById('team-test-results');
-        const percentage = Math.round((correctCount / teamPlayers.length) * 100);
-        
-        if (correctCount === teamPlayers.length) {
-            resultsDiv.textContent = `Perfect! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
-            resultsDiv.className = 'results success';
-        } else if (correctCount > 0) {
-            resultsDiv.textContent = `Good effort! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
-            resultsDiv.className = 'results partial';
-        } else {
-            resultsDiv.textContent = `Keep trying! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
-            resultsDiv.className = 'results failure';
+        if (resultsDiv) {
+            const percentage = Math.round((correctCount / teamPlayers.length) * 100);
+            
+            if (correctCount === teamPlayers.length) {
+                resultsDiv.textContent = `Perfect! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
+                resultsDiv.className = 'results success';
+            } else if (correctCount > 0) {
+                resultsDiv.textContent = `Good effort! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
+                resultsDiv.className = 'results partial';
+            } else {
+                resultsDiv.textContent = `Keep trying! ${correctCount}/${teamPlayers.length} (${percentage}%)`;
+                resultsDiv.className = 'results failure';
+            }
         }
         
         // Show story segments for correct answers
-        ui.showStorySegments(correctAnswers);
+        if (window.ui) {
+            ui.showStorySegments(correctAnswers);
+        }
     }
 
     // Update score display
     updateScore() {
-        document.getElementById('score').textContent = `Score: ${this.correctTests}/${this.totalTests}`;
+        const scoreEl = document.getElementById('score');
+        if (scoreEl) {
+            scoreEl.textContent = `Score: ${this.correctTests}/${this.totalTests}`;
+        }
     }
 
     // Get team counts for dropdown
@@ -127,16 +173,20 @@ class BasketballMemoryGame {
         const teamCounts = {};
         
         // Initialize all teams with 0
-        for (const teamCode in TEAM_NAMES) {
-            teamCounts[teamCode] = 0;
+        const teams = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'];
+        
+        for (const team of teams) {
+            teamCounts[team] = 0;
         }
         
         // Count players per team
-        for (const playerName in game.getPlayers()) {
-            const player = game.getPlayers()[playerName];
-            for (const team of player.teams) {
-                if (teamCounts[team] !== undefined) {
-                    teamCounts[team]++;
+        for (const playerName in this.playersData) {
+            const player = this.playersData[playerName];
+            if (player.teams) {
+                for (const team of player.teams) {
+                    if (teamCounts[team] !== undefined) {
+                        teamCounts[team]++;
+                    }
                 }
             }
         }
@@ -148,18 +198,20 @@ class BasketballMemoryGame {
     lookupTeam(teamCode) {
         const foundPlayers = [];
         
-        for (const playerName in game.getPlayers()) {
-            const player = game.getPlayers()[playerName];
-            const teamIndex = player.teams.indexOf(teamCode);
-            
-            if (teamIndex !== -1) {
-                foundPlayers.push({
-                    name: playerName,
-                    theme: player.keyWord,
-                    position: teamIndex + 1,
-                    totalTeams: player.teams.length,
-                    storySegment: this.extractStorySegment(player.story, teamCode)
-                });
+        for (const playerName in this.playersData) {
+            const player = this.playersData[playerName];
+            if (player.teams) {
+                const teamIndex = player.teams.indexOf(teamCode);
+                
+                if (teamIndex !== -1) {
+                    foundPlayers.push({
+                        name: playerName,
+                        theme: player.keyWord,
+                        position: teamIndex + 1,
+                        totalTeams: player.teams.length,
+                        storySegment: this.extractStorySegment(player.story, teamCode)
+                    });
+                }
             }
         }
         
@@ -167,5 +219,53 @@ class BasketballMemoryGame {
     }
 }
 
+// Team names for display
+const TEAM_NAMES = {
+    'ATL': 'Atlanta Hawks',
+    'BOS': 'Boston Celtics',
+    'BKN': 'Brooklyn Nets',
+    'CHA': 'Charlotte Hornets',
+    'CHI': 'Chicago Bulls',
+    'CLE': 'Cleveland Cavaliers',
+    'DAL': 'Dallas Mavericks',
+    'DEN': 'Denver Nuggets',
+    'DET': 'Detroit Pistons',
+    'GSW': 'Golden State Warriors',
+    'HOU': 'Houston Rockets',
+    'IND': 'Indiana Pacers',
+    'LAC': 'LA Clippers',
+    'LAL': 'Los Angeles Lakers',
+    'MEM': 'Memphis Grizzlies',
+    'MIA': 'Miami Heat',
+    'MIL': 'Milwaukee Bucks',
+    'MIN': 'Minnesota Timberwolves',
+    'NOP': 'New Orleans Pelicans',
+    'NYK': 'New York Knicks',
+    'OKC': 'Oklahoma City Thunder',
+    'ORL': 'Orlando Magic',
+    'PHI': 'Philadelphia 76ers',
+    'PHO': 'Phoenix Suns',
+    'POR': 'Portland Trail Blazers',
+    'SAC': 'Sacramento Kings',
+    'SAS': 'San Antonio Spurs',
+    'TOR': 'Toronto Raptors',
+    'UTA': 'Utah Jazz',
+    'WAS': 'Washington Wizards'
+};
+
 // Create global game instance
 const game = new BasketballMemoryGame();
+
+// Load players when the script loads
+console.log('Game.js loaded, fetching players...');
+game.loadPlayers().then(() => {
+    console.log('Players loaded successfully');
+    // If UI exists, refresh it
+    if (window.ui) {
+        ui.renderPlayerList();
+        ui.populateTeamDropdown();
+        ui.populateDataLists();
+    }
+}).catch(error => {
+    console.error('Failed to load players:', error);
+});
